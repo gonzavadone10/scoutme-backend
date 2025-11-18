@@ -1,0 +1,17 @@
+{
+  "name": "scoutme-backend",
+  "version": "1.0.0",
+  "description": "API backend del proyecto ScoutMe",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  }
+}
