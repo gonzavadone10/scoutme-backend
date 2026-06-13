@@ -19,21 +19,36 @@ app.get("/", (req, res) => {
 
 // Registro de usuario
 app.post("/api/auth/register", (req, res) => {
+  console.log("BODY RECIBIDO:", req.body);
+
   const { nombreCompleto, email, password } = req.body;
 
   if (!nombreCompleto || !email || !password) {
-    return res.status(400).json({ message: "Todos los campos son obligatorios" });
+    return res.status(400).json({
+      message: "Todos los campos son obligatorios",
+    });
   }
 
   const exists = users.find((u) => u.email === email);
+
   if (exists) {
-    return res.status(409).json({ message: "El correo ya está registrado" });
+    return res.status(409).json({
+      message: "El correo ya está registrado",
+    });
   }
 
-  const newUser = { id: users.length + 1, nombreCompleto, email, password };
+  const newUser = {
+    id: users.length + 1,
+    nombreCompleto,
+    email,
+    password,
+  };
+
   users.push(newUser);
 
-  res.status(201).json({ message: "Usuario registrado correctamente" });
+  res.status(201).json({
+    message: "Usuario registrado correctamente",
+  });
 });
 
 // Login
