@@ -15,9 +15,24 @@ router.get("/", async (req, res) => {
         perfiles.posicion,
         perfiles.club,
         perfiles.pie_habil,
-        perfiles.biografia
+        perfiles.biografia,
+        COALESCE(SUM(estadisticas.goles), 0) AS goles,
+        COALESCE(SUM(estadisticas.asistencias), 0) AS asistencias,
+        COALESCE(SUM(estadisticas.minutos), 0) AS minutos
       FROM perfiles
       INNER JOIN usuarios ON perfiles.usuario_id = usuarios.id
+      LEFT JOIN estadisticas ON perfiles.id = estadisticas.perfil_id
+      GROUP BY 
+        perfiles.id,
+        perfiles.usuario_id,
+        usuarios.nombre_completo,
+        usuarios.email,
+        usuarios.rol,
+        perfiles.edad,
+        perfiles.posicion,
+        perfiles.club,
+        perfiles.pie_habil,
+        perfiles.biografia
       ORDER BY perfiles.id DESC
     `);
 
