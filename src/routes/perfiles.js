@@ -2,6 +2,34 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
+router.get("/", async (req, res) => {
+  try {
+    const [perfiles] = await db.query(`
+      SELECT 
+        perfiles.id AS perfil_id,
+        perfiles.usuario_id,
+        usuarios.nombre_completo,
+        usuarios.email,
+        usuarios.rol,
+        perfiles.edad,
+        perfiles.posicion,
+        perfiles.club,
+        perfiles.pie_habil,
+        perfiles.biografia
+      FROM perfiles
+      INNER JOIN usuarios ON perfiles.usuario_id = usuarios.id
+      ORDER BY perfiles.id DESC
+    `);
+
+    res.json(perfiles);
+  } catch (error) {
+    console.error("Error al obtener perfiles:", error);
+    res.status(500).json({
+      message: "Error interno del servidor",
+    });
+  }
+});
+
 router.get("/:usuarioId", async (req, res) => {
   try {
     const { usuarioId } = req.params;
