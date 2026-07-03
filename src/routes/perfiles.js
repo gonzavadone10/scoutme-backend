@@ -16,6 +16,7 @@ router.get("/", async (req, res) => {
         perfiles.club,
         perfiles.pie_habil,
         perfiles.biografia,
+        perfiles.estado_fisico,
         COALESCE(SUM(estadisticas.goles), 0) AS goles,
         COALESCE(SUM(estadisticas.asistencias), 0) AS asistencias,
         COALESCE(SUM(estadisticas.minutos), 0) AS minutos
@@ -32,7 +33,8 @@ router.get("/", async (req, res) => {
         perfiles.posicion,
         perfiles.club,
         perfiles.pie_habil,
-        perfiles.biografia
+        perfiles.biografia,
+        perfiles.estado_fisico
       ORDER BY perfiles.id DESC
     `);
 
@@ -78,6 +80,7 @@ router.post("/", async (req, res) => {
       club,
       pieHabil,
       biografia,
+      estadoFisico,
     } = req.body;
 
     if (!usuarioId) {
@@ -99,9 +102,17 @@ router.post("/", async (req, res) => {
 
     await db.query(
       `INSERT INTO perfiles 
-      (usuario_id, edad, posicion, club, pie_habil, biografia)
-      VALUES (?, ?, ?, ?, ?, ?)`,
-      [usuarioId, edad, posicion, club, pieHabil, biografia]
+      (usuario_id, edad, posicion, club, pie_habil, biografia, estado_fisico)
+      VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [
+        usuarioId,
+        edad,
+        posicion,
+        club,
+        pieHabil,
+        biografia,
+        estadoFisico || "No informado",
+      ]
     );
 
     res.status(201).json({
@@ -118,13 +129,28 @@ router.post("/", async (req, res) => {
 router.put("/:usuarioId", async (req, res) => {
   try {
     const { usuarioId } = req.params;
-    const { edad, posicion, club, pieHabil, biografia } = req.body;
+    const {
+      edad,
+      posicion,
+      club,
+      pieHabil,
+      biografia,
+      estadoFisico,
+    } = req.body;
 
     await db.query(
       `UPDATE perfiles 
-       SET edad = ?, posicion = ?, club = ?, pie_habil = ?, biografia = ?
+       SET edad = ?, posicion = ?, club = ?, pie_habil = ?, biografia = ?, estado_fisico = ?
        WHERE usuario_id = ?`,
-      [edad, posicion, club, pieHabil, biografia, usuarioId]
+      [
+        edad,
+        posicion,
+        club,
+        pieHabil,
+        biografia,
+        estadoFisico || "No informado",
+        usuarioId,
+      ]
     );
 
     res.json({
@@ -142,10 +168,7 @@ router.delete("/:usuarioId", async (req, res) => {
   try {
     const { usuarioId } = req.params;
 
-    await db.query(
-      "DELETE FROM perfiles WHERE usuario_id = ?",
-      [usuarioId]
-    );
+    await db.query("DELETE FROM perfiles WHERE usuario_id = ?", [usuarioId]);
 
     res.json({
       message: "Perfil eliminado correctamente",
